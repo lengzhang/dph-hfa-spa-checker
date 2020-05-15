@@ -1,13 +1,11 @@
 import Head from 'next/head'
 
-import usePDFContent from './usePDFContent'
+import Table from '../components/Table'
 
-import pdfjsLib from 'pdfjs-dist'
-
-pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/browse/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker`
+import usePDFContent from '../hooks/usePDFContent'
 
 const Home = () => {
-  const { content, loadFromURL } = usePDFContent()
+  const { loading, content, loadFromURL } = usePDFContent()
 
   const onChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const fileList = event.target.files
@@ -19,6 +17,7 @@ const Home = () => {
   return (
     <div>
       <input type="file" onChange={onChange} multiple={false} accept=".pdf" />
+      <Table content={content} />
     </div>
   )
 }
