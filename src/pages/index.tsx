@@ -1,5 +1,6 @@
-import Head from 'next/head'
+import MuiTypography from '@material-ui/core/Typography'
 
+import Header from '../components/Header'
 import Table from '../components/Table'
 
 import usePDFContent from '../hooks/usePDFContent'
@@ -16,6 +17,8 @@ const Home = () => {
   }
   return (
     <div>
+      <Header title="DPH HFA SPA Checker" />
+      <MuiTypography variant="h4">DPH HFA SPA Checker</MuiTypography>
       <input type="file" onChange={onChange} multiple={false} accept=".pdf" />
       <Table content={content} />
     </div>
