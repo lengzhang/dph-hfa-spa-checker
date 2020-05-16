@@ -1,16 +1,17 @@
-import { useState, useReducer } from 'react'
+import { useReducer } from 'react'
 
 import pdfjsLib from 'pdfjs-dist'
-// pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/browse/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker`
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/browse/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker`
 
 import getHeader from './getHeader'
 import getPersonnel from './getPersonnel'
-import getOperatingExpenses from './getOperatingExpenses'
-import getOtherCosts from './getOtherCosts'
+import getSection from './getSection'
 
 import { myParseInt, isNumber } from './utilts'
 
 import { Content, State, Reducer } from './types'
+
+import setByPath from '../../utils/setByPath'
 
 const initialState: State = { loading: false, error: null, content: null }
 
@@ -70,17 +71,19 @@ const usePDFContent = () => {
           personnelIndex,
           operatingExpensesIndex
         )
-        const [operatingExpenses] = getOperatingExpenses(
+        const [operatingExpenses] = getSection(
+          'TOTAL OPERATING EXPENSES',
           items,
           operatingExpensesIndex,
           otherCostsIndex
         )
-        const [otherCosts, otherCostsEndIndex] = getOtherCosts(
+        const [otherCosts, otherCostsEndIndex] = getSection(
+          'TOTAL OTHER COSTS',
           items,
           otherCostsIndex,
           indirectCostsIndex
         )
-        let step = 0
+
         const result: Content = {
           header,
           personnel,

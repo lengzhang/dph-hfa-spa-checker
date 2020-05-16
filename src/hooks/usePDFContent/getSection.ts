@@ -1,38 +1,13 @@
-import pdfjsLib from 'pdfjs-dist'
 import { myParseInt, isNumber } from './utilts'
+import { GetSection, Section } from './types'
 
-export interface OtherCostsListItem {
-  title: string
-  A: number
-  B: number
-  C: number
-  D: number
-  E: number
-}
-export interface OtherCostsTotal {
-  A: number
-  B: number
-  C: number
-  D: number
-  E: number
-}
-export interface OtherCosts {
-  list: OtherCostsListItem[]
-  total: null | OtherCostsTotal
-}
-interface GetOtherCosts {
-  (items: pdfjsLib.TextContentItem[], start: number, end: number): [
-    OtherCosts,
-    number
-  ]
-}
-
-const getOtherCosts: GetOtherCosts = (items, start, end) => {
-  const result: OtherCosts = { list: [], total: null }
+const getSection: GetSection = (totalRegex, items, start, end) => {
+  const result: Section = { list: [], total: null }
+  const regex = new RegExp(`^${totalRegex}`)
 
   const totalIndex = items.findIndex((item, index) => {
     if (index <= start || index > end) return false
-    return /^TOTAL OTHER COSTS/.test(item.str)
+    return regex.test(item.str)
   })
 
   const temp: { title: string[]; nums: string[] } = { title: [], nums: [] }
@@ -55,7 +30,7 @@ const getOtherCosts: GetOtherCosts = (items, start, end) => {
           D: myParseInt(temp.nums.shift()),
           E: myParseInt(temp.nums.shift()),
         })
-      } else if (/^TOTAL OTHER COSTS/.test(title)) {
+      } else if (regex.test(title)) {
         result.total = {
           A: myParseInt(temp.nums.shift()),
           B: myParseInt(temp.nums.shift()),
@@ -74,4 +49,4 @@ const getOtherCosts: GetOtherCosts = (items, start, end) => {
   return [result, i]
 }
 
-export default getOtherCosts
+export default getSection

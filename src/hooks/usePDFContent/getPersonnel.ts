@@ -1,45 +1,5 @@
-import pdfjsLib from 'pdfjs-dist'
 import { myParseInt, isNumber } from './utilts'
-
-export interface PersonnelListItem {
-  title: string
-  A: number
-  B: number
-  C: number
-  D: number
-  E: number
-}
-export interface PersonnelSubtotal {
-  A: number
-  B: number
-  C: number
-  D: number
-  E: number
-}
-export interface PersonnelTotal {
-  A: number
-  B: number
-  C: number
-  D: number
-  E: number
-}
-export interface PersonnelBenefits {
-  rate: number
-  A: number
-  B: number
-  C: number
-  D: number
-  E: number
-}
-export interface Personnel {
-  list: PersonnelListItem[]
-  subtotal: null | PersonnelSubtotal
-  total: null | PersonnelTotal
-  benefits: null | PersonnelBenefits
-}
-interface GetPersonnel {
-  (items: pdfjsLib.TextContentItem[], start: number, end: number): Personnel
-}
+import { GetPersonnel, Personnel } from './types'
 
 const getPersonnel: GetPersonnel = (items, start, end) => {
   const result: Personnel = {

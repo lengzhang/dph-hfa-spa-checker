@@ -1,10 +1,4 @@
-import pdfjsLib from 'pdfjs-dist'
-
-export type Header = Record<string, { key: string; value: string }>
-
-export interface GetHeader {
-  (items: pdfjsLib.TextContentItem[], start: number, end: number): Header
-}
+import { GetHeader } from './types'
 
 const getHeader: GetHeader = (items, start, end) => {
   const result = {}
