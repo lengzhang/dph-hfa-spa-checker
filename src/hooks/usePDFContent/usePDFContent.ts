@@ -11,14 +11,20 @@ import { myParseInt, isNumber } from './utilts'
 
 import { Content, State, Reducer } from './types'
 
-import setByPath from '../../utils/setByPath'
-
-const initialState: State = { loading: false, error: null, content: null }
+const initialState: State = {
+  fileName: '',
+  loadingStep: 0,
+  error: null,
+  content: null,
+}
 
 const reducer: Reducer = (state, action) => {
   switch (action.type) {
-    case 'set-loading':
-      return { ...state, loading: action.value }
+    case 'set-file-name':
+      return { ...state, fileName: action.value }
+
+    case 'set-loadingStep':
+      return { ...state, loadingStep: action.value }
 
     case 'set-error':
       return { ...state, error: action.value }
@@ -34,11 +40,13 @@ const reducer: Reducer = (state, action) => {
 const usePDFContent = () => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
-  const loadFromURL = (url: string) => {
-    dispatch({ type: 'set-loading', value: true })
+  const loadFromURL = (url: string, fileName: string) => {
+    dispatch({ type: 'set-error', value: null })
+    dispatch({ type: 'set-file-name', value: fileName })
+    dispatch({ type: 'set-loadingStep', value: 1 })
     const loadingTask = pdfjsLib.getDocument({ url })
-    try {
-      loadingTask.promise.then(async function (pdf) {
+    loadingTask.promise.then(async function (pdf) {
+      try {
         // you can now use *pdf* here
         const page = await pdf.getPage(1)
         const textContent = await page.getTextContent()
@@ -64,19 +72,30 @@ const usePDFContent = () => {
           },
           [-1, -1, -1, -1]
         )
+        if (
+          personnelIndex === -1 ||
+          operatingExpensesIndex === -1 ||
+          otherCostsIndex === -1 ||
+          indirectCostsIndex === -1
+        ) {
+          throw new Error('Please select DPH HFA SPA file.')
+        }
 
         const header = getHeader(items, 0, personnelIndex)
+        dispatch({ type: 'set-loadingStep', value: 2 })
         const personnel = getPersonnel(
           items,
           personnelIndex,
           operatingExpensesIndex
         )
+        dispatch({ type: 'set-loadingStep', value: 3 })
         const [operatingExpenses] = getSection(
           'TOTAL OPERATING EXPENSES',
           items,
           operatingExpensesIndex,
           otherCostsIndex
         )
+        dispatch({ type: 'set-loadingStep', value: 4 })
         const [otherCosts, otherCostsEndIndex] = getSection(
           'TOTAL OTHER COSTS',
           items,
@@ -93,6 +112,7 @@ const usePDFContent = () => {
           total: null,
         }
 
+        dispatch({ type: 'set-loadingStep', value: 5 })
         let temp: { title: string[]; nums: string[] } = { title: [], nums: [] }
         for (let i = otherCostsEndIndex + 1; i < items.length; ++i) {
           const item = items[i].str
@@ -127,13 +147,14 @@ const usePDFContent = () => {
           }
         }
         dispatch({ type: 'set-content', value: result })
-        dispatch({ type: 'set-loading', value: false })
+        dispatch({ type: 'set-loadingStep', value: 0 })
         URL.revokeObjectURL(url)
-      })
-    } catch (error) {
-      dispatch({ type: 'set-error', value: error })
-      dispatch({ type: 'set-loading', value: true })
-    }
+      } catch (error) {
+        dispatch({ type: 'set-content', value: null })
+        dispatch({ type: 'set-error', value: error })
+        dispatch({ type: 'set-loadingStep', value: 0 })
+      }
+    })
   }
 
   return { ...state, loadFromURL }

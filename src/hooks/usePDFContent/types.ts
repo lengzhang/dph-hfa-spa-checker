@@ -57,15 +57,20 @@ export interface Content {
 
 /*---------- Reducer ----------*/
 export interface State {
-  loading: boolean
+  fileName: string
+  loadingStep: number
   error: null | Error
   content: null | Content
 }
 
 export type Action =
   | {
-      type: 'set-loading'
-      value: boolean
+      type: 'set-file-name'
+      value: string
+    }
+  | {
+      type: 'set-loadingStep'
+      value: number
     }
   | {
       type: 'set-error'
