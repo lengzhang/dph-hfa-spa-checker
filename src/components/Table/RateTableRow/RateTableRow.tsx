@@ -12,29 +12,27 @@ const RateTableRow: React.FC<RateTableRowProps> = ({
   items,
   checkItems,
 }) => {
-  const checkItemsWithRate = keys.reduce((acc, key) => {
-    acc[key] = Math.round(checkItems[key] * (items.rate / 100))
-    return acc
-  }, {})
+  const fontColors = {
+    A: 'black',
+    B:
+      items['B'] <= Math.round(checkItems['B'] * (items.rate / 100))
+        ? 'green'
+        : 'red',
+    C: items['C'] === items['A'] + items['B'] ? 'green' : 'red',
+    D: 'black',
+    E: items['E'] === items['D'] - items['C'] ? 'green' : 'red',
+  }
 
   return (
     <TableRow hover>
       <TableCell fontBlod component="th" align="left">
         {title}
       </TableCell>
-      {keys.map((key, i) => {
-        const isCorrect = items[key] <= checkItemsWithRate[key]
-        return (
-          <TableCell
-            key={i}
-            fontBlod
-            fontColor={isCorrect ? 'green' : 'red'}
-            align="right"
-          >
-            {items[key]}
-          </TableCell>
-        )
-      })}
+      {keys.map((key, i) => (
+        <TableCell key={i} fontBlod fontColor={fontColors[key]} align="right">
+          {items[key]}
+        </TableCell>
+      ))}
     </TableRow>
   )
 }
