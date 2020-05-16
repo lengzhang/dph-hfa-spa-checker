@@ -27,7 +27,7 @@ const Table: React.FC<TableProps> = ({
   },
 }) => {
   return (
-    <MuiTableContainer component={MuiPaper}>
+    <MuiTableContainer component={MuiPaper} variant="outlined">
       <MuiTable size="small">
         <TableHeader content={header} />
         <MuiTableBody>

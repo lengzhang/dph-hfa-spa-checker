@@ -25,7 +25,7 @@ const useStyles = makeStyles<Theme>((theme) =>
       position: 'absolute',
       top: 0,
       left: 0,
-      zIndex: -1,
+      zIndex: 1,
     },
   })
 )
@@ -78,6 +78,11 @@ const UploadButton: React.FC<UploadButtonProps> = ({
           {fileName ? fileName : 'Please select file'}
         </MuiTypography>
       </MuiBox>
+      {loadingStep === 1 && (
+        <MuiTypography variant="subtitle2">
+          Loading your pdf file, please wait.
+        </MuiTypography>
+      )}
       {error && (
         <MuiTypography color="error" variant="subtitle2">
           {error.message}

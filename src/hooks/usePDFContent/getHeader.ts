@@ -15,8 +15,9 @@ const getHeader: GetHeader = (items, start, end) => {
         value: value.trim(),
       }
     } else if (/^Date Prepared/i.test(item)) {
-      result[item.toLowerCase().replace(' ', '-')] = {
-        key: item.replace(':', ''),
+      const key = item.replace(/:/, '')
+      result[key.toLowerCase().replace(/\s/, '-')] = {
+        key,
         value: items[++i].str.trim(),
       }
     }
